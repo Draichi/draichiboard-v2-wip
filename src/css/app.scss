@@ -1,0 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700&display=swap');
+
+html::-webkit-scrollbar {
+  display: none;
+}
+html{
+  -ms-overflow-style: none;
+}
+
+.body--light, .body--dark {
+  div#q-app{
+    font-family: Rubik, sans-serif;
+    scroll-behavior: smooth;
+  }
+}
+.body--light {
+  div#q-app {
+    background: linear-gradient(to bottom, $background-1, $background-2);
+  }
+  .q-card, .q-table__container {
+    background: $background-2;
+  }
+}
+
+.body--dark {
+  div#q-app {
+    background: linear-gradient(#1e1e2f,#1e1e24);
+  }
+}
