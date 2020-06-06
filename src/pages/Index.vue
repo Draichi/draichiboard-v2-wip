@@ -1,19 +1,25 @@
 <template>
   <q-page class="flex flex-center">
     <q-card v-if="!loading" style="width: 100vw;">
-      <BarChart :data="data"/>
+      <LineChart :data="data"/>
     </q-card>
+
+    <!-- <q-card v-if="!loading" style="width: 100vw;">
+      <BarChart :data="data"/>
+    </q-card> -->
   </q-page>
 </template>
 
 <script>
-import BarChart from 'components/BarChart';
+import LineChart from 'components/LineChart';
+// import BarChart from 'components/BarChart';
 import { githubToken } from '../../.env.local.js';
 
 export default {
   name: 'PageIndex',
   components: {
-    BarChart,
+    LineChart,
+    // BarChart,
   },
   data() {
     return {
@@ -30,15 +36,19 @@ export default {
         Authorization: `bearer ${token}`,
       };
       const body = {
+        // https://developer.github.com/v4/object/contributionscollection/
         query: `query {
             user(login: "${username}") {
-              contributionsCollection(from: "2020-01-10T00:00:00", to: "2020-06-04T00:00:00") {
+              contributionsCollection {
+                totalCommitContributions
                 totalIssueContributions
                 totalPullRequestContributions
                 totalPullRequestReviewContributions
                 totalRepositoriesWithContributedCommits
                 totalRepositoriesWithContributedIssues
                 totalRepositoriesWithContributedPullRequests
+                totalRepositoriesWithContributedPullRequestReviews
+                totalRepositoryContributions
                 contributionCalendar {
                   totalContributions
                   weeks {
@@ -56,19 +66,25 @@ export default {
       const response = await fetch('https://api.github.com/graphql', { method: 'POST', body: JSON.stringify(body), headers });
       const dataaa = await response.json();
       const {
-        // totalIssueContributions,
-        // totalPullRequestContributions,
-        // totalPullRequestReviewContributions,
-        // totalRepositoriesWithContributedCommits,
-        // totalRepositoriesWithContributedIssues,
+        totalIssueContributions,
+        totalPullRequestContributions,
+        totalCommitContributions,
+        totalPullRequestReviewContributions,
+        totalRepositoriesWithContributedCommits,
+        totalRepositoriesWithContributedIssues,
+        totalRepositoryContributions,
         contributionCalendar,
       } = dataaa.data.user.contributionsCollection;
-      // console.log(totalIssueContributions,
-      //   totalPullRequestContributions,
-      //   totalPullRequestReviewContributions,
-      //   totalRepositoriesWithContributedCommits,
-      //   totalRepositoriesWithContributedIssues);
-      // console.log(contributionCalendar.totalContributions);
+      console.log({
+        totalIssueContributions,
+        totalCommitContributions,
+        totalRepositoryContributions,
+        totalPullRequestContributions,
+        totalPullRequestReviewContributions,
+        totalRepositoriesWithContributedCommits,
+        totalRepositoriesWithContributedIssues,
+      });
+      console.log(contributionCalendar.totalContributions);
       // console.log(contributionCalendar.weeks);
       const callbackForData = (item) => {
         // console.log(item.contributionDays);
