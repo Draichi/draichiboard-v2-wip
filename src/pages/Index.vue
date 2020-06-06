@@ -85,15 +85,9 @@ export default {
         totalRepositoriesWithContributedIssues,
       });
       console.log(contributionCalendar.totalContributions);
-      // console.log(contributionCalendar.weeks);
       const callbackForData = (item) => {
-        // console.log(item.contributionDays);
         const weekContributions = item.contributionDays
           .reduce((acc, val) => acc.concat(val.contributionCount), []);
-        // const weekContributionsClean = weekContributions.reduce((a, b) => a + b, 0);
-        // console.log(
-        //   weekContributionsClean,
-        // );
         return weekContributions.reduce((a, b) => a + b, 0);
       };
       const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
@@ -105,7 +99,6 @@ export default {
         const monthNumber = new Date(date).getMonth();
         const formatedDate = monthNames[monthNumber];
         return formatedDate;
-        // return item.contributionDays.map((i) => i.date);
       };
       const rawData = contributionCalendar.weeks.map(callbackForData).flat();
       const chunkArray = (array, size) => {
