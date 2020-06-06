@@ -2,6 +2,13 @@
 
 Lucas Draichi portfolio and personal metrics dashboard
 
+## Get githubToken
+```bash
+cp .env.example.js .env.local.js
+
+# then populate .env.local.js
+```
+
 ## Install the dependencies
 ```bash
 yarn
