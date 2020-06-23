@@ -25,6 +25,28 @@ export default {
     return {
       data: null,
       loading: true,
+      years: [
+        {
+          from: '2020-01-01T00:00:00',
+          to: '2020-12-01T00:00:00',
+          label: '2020',
+        },
+        {
+          from: '2019-01-01T00:00:00',
+          to: '2019-12-01T00:00:00',
+          label: '2019',
+        },
+        {
+          from: '2018-01-01T00:00:00',
+          to: '2018-12-01T00:00:00',
+          label: '2018',
+        },
+        {
+          from: '2017-01-01T00:00:00',
+          to: '2017-12-01T00:00:00',
+          label: '2017',
+        },
+      ],
     };
   },
   async mounted() {
@@ -39,7 +61,7 @@ export default {
         // https://developer.github.com/v4/object/contributionscollection/
         query: `query {
             user(login: "${username}") {
-              contributionsCollection {
+              contributionsCollection(from: "2020-01-01T00:00:00", to: "2020-12-01T00:00:00") {
                 totalCommitContributions
                 totalIssueContributions
                 totalPullRequestContributions
