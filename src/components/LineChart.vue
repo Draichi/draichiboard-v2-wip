@@ -27,7 +27,7 @@ export default {
     this.data.datasets[0].pointHoverRadius = 4;
     this.data.datasets[0].pointHoverBorderWidth = 15;
     this.data.datasets[0].pointRadius = 4;
-    this.data.datasets[0].label = 'My First dataset';
+    // this.data.datasets[0].label = 'My First dataset';
     const options = {
       maintainAspectRatio: false,
       legend: {

@@ -15,6 +15,47 @@ import LineChart from 'components/LineChart';
 // import BarChart from 'components/BarChart';
 import { githubToken } from '../../.env.local.js';
 
+const today = new Date().toISOString();
+
+const getWeeklyContributions = (week) => {
+  const weekContributionsArray = week.contributionDays
+    .reduce((acc, val) => acc.concat(val.contributionCount), []);
+  const weekContributions = weekContributionsArray.reduce((a, b) => a + b, 0);
+  return weekContributions;
+};
+
+const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December',
+];
+
+const callbackForLabel = (item) => {
+  const { length } = item.contributionDays;
+  const { date } = item.contributionDays[length - 1];
+  const monthNumber = new Date(date).getMonth();
+  const formatedDate = `${monthNames[monthNumber]} / 20`;
+  return formatedDate;
+};
+
+const getContributionsByMonth = (array, size) => {
+  if (array.length <= size) {
+    return [array];
+  }
+  return [array.slice(0, size), ...getContributionsByMonth(array.slice(size), size)];
+};
+
+const sanitazeData = (contributionCalendarWeeks) => {
+  const weeklyContributions = contributionCalendarWeeks.map(getWeeklyContributions).flat();
+  const montlyContributionsArray = getContributionsByMonth(weeklyContributions, 4);
+  const montlyContributions = montlyContributionsArray.map((item) => item.reduce((a, b) => a + b));
+  return montlyContributions;
+};
+
+const sanitazeLabels = (contributionCalendarWeeks) => {
+  const weeklyContributions = contributionCalendarWeeks.map(callbackForLabel).flat();
+  const labels = [...new Set(weeklyContributions)];
+  return labels;
+};
+
 export default {
   name: 'PageIndex',
   components: {
@@ -61,7 +102,7 @@ export default {
         // https://developer.github.com/v4/object/contributionscollection/
         query: `query {
             user(login: "${username}") {
-              contributionsCollection(from: "2020-01-01T00:00:00", to: "2020-12-01T00:00:00") {
+              contributionsCollection(from: "2020-01-01T00:00:00", to: "${today}") {
                 totalCommitContributions
                 totalIssueContributions
                 totalPullRequestContributions
@@ -106,33 +147,9 @@ export default {
         totalRepositoriesWithContributedCommits,
         totalRepositoriesWithContributedIssues,
       });
-      console.log(contributionCalendar.totalContributions);
-      const callbackForData = (item) => {
-        const weekContributions = item.contributionDays
-          .reduce((acc, val) => acc.concat(val.contributionCount), []);
-        return weekContributions.reduce((a, b) => a + b, 0);
-      };
-      const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
-        'July', 'August', 'September', 'October', 'November', 'December',
-      ];
-      const callbackForLabel = (item) => {
-        const { length } = item.contributionDays;
-        const { date } = item.contributionDays[length - 1];
-        const monthNumber = new Date(date).getMonth();
-        const formatedDate = monthNames[monthNumber];
-        return formatedDate;
-      };
-      const rawData = contributionCalendar.weeks.map(callbackForData).flat();
-      const chunkArray = (array, size) => {
-        if (array.length <= size) {
-          return [array];
-        }
-        return [array.slice(0, size), ...chunkArray(array.slice(size), size)];
-      };
-      const dataByMonth = chunkArray(rawData, 4);
-      const data = dataByMonth.map((item) => item.reduce((a, b) => a + b));
-      const rawLabels = contributionCalendar.weeks.map(callbackForLabel).flat();
-      const labels = [...new Set(rawLabels)];
+      const contributionCalendarWeeks = contributionCalendar.weeks;
+      const data = sanitazeData(contributionCalendarWeeks);
+      const labels = sanitazeLabels(contributionCalendarWeeks);
       this.data = {
         labels,
         datasets: [{
