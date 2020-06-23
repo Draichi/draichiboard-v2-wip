@@ -1,7 +1,7 @@
 <template>
   <q-page class="flex flex-center">
     <q-card v-if="!loading" style="width: 100vw;">
-      <LineChart :data="data"/>
+      <LineChart :data="sanitazedData"/>
     </q-card>
 
     <!-- <q-card v-if="!loading" style="width: 100vw;">
@@ -28,13 +28,13 @@ const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December',
 ];
 
-const callbackForLabel = (item) => {
-  const { length } = item.contributionDays;
-  const { date } = item.contributionDays[length - 1];
-  const monthNumber = new Date(date).getMonth();
-  const formatedDate = `${monthNames[monthNumber]} / 20`;
-  return formatedDate;
-};
+// const callbackForLabel = (item) => {
+//   const { length } = item.contributionDays;
+//   const { date } = item.contributionDays[length - 1];
+//   const monthNumber = new Date(date).getMonth();
+//   const formatedDate = `${monthNames[monthNumber]} / 20`;
+//   return formatedDate;
+// };
 
 const getContributionsByMonth = (array, size) => {
   if (array.length <= size) {
@@ -50,8 +50,15 @@ const sanitazeData = (contributionCalendarWeeks) => {
   return montlyContributions;
 };
 
-const sanitazeLabels = (contributionCalendarWeeks) => {
-  const weeklyContributions = contributionCalendarWeeks.map(callbackForLabel).flat();
+const sanitazeLabels = (contributionCalendarWeeks, yearLabel) => {
+  // const weeklyContributions = contributionCalendarWeeks.map(callbackForLabel).flat();
+  const weeklyContributions = contributionCalendarWeeks.map((item) => {
+    const { length } = item.contributionDays;
+    const { date } = item.contributionDays[length - 1];
+    const monthNumber = new Date(date).getMonth();
+    const formatedDate = `${monthNames[monthNumber]} / ${yearLabel}`;
+    return formatedDate;
+  }).flat();
   const labels = [...new Set(weeklyContributions)];
   return labels;
 };
@@ -64,12 +71,14 @@ export default {
   },
   data() {
     return {
-      data: null,
+      sanitazedData: null,
+      data: [],
+      labels: [],
       loading: true,
       years: [
         {
           from: '2020-01-01T00:00:00',
-          to: '2020-12-01T00:00:00',
+          to: today,
           label: '2020',
         },
         {
@@ -90,11 +99,11 @@ export default {
       ],
     };
   },
-  async mounted() {
-    await this.getContributions(githubToken, 'Draichi');
+  mounted() {
+    this.getYearlyContributions();
   },
   methods: {
-    async getContributions(token, username) {
+    async getContributions(token, username, year) {
       const headers = {
         Authorization: `bearer ${token}`,
       };
@@ -102,7 +111,7 @@ export default {
         // https://developer.github.com/v4/object/contributionscollection/
         query: `query {
             user(login: "${username}") {
-              contributionsCollection(from: "2020-01-01T00:00:00", to: "${today}") {
+              contributionsCollection(from: "${year.from}", to: "${year.to}") {
                 totalCommitContributions
                 totalIssueContributions
                 totalPullRequestContributions
@@ -148,20 +157,25 @@ export default {
         totalRepositoriesWithContributedIssues,
       });
       const contributionCalendarWeeks = contributionCalendar.weeks;
-      const data = sanitazeData(contributionCalendarWeeks);
-      const labels = sanitazeLabels(contributionCalendarWeeks);
-      this.data = {
-        labels,
+      this.data.push(...sanitazeData(contributionCalendarWeeks));
+      this.labels.push(...sanitazeLabels(contributionCalendarWeeks, year.label));
+      this.sanitazedData = {
+        labels: this.labels,
         datasets: [{
           label: 'Custom Label Name',
           // backgroundColor: gradient,
           pointBackgroundColor: 'white',
           borderWidth: 1,
           borderColor: '#911215',
-          data,
+          data: this.data,
         }],
       };
       this.loading = false;
+    },
+    getYearlyContributions() {
+      this.years.forEach((year) => {
+        this.getContributions(githubToken, 'Draichi', year);
+      });
     },
   },
 };
