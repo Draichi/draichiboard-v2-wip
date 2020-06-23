@@ -1,5 +1,6 @@
 <template>
   <q-page class="flex flex-center">
+    {{ datinha }}
     <q-card v-if="!loading" style="width: 100vw;">
       <LineChart :data="sanitazedData"/>
     </q-card>
@@ -75,6 +76,7 @@ export default {
       data: [],
       labels: [],
       loading: true,
+      datinha: [],
       years: [
         {
           from: '2020-01-01T00:00:00',
@@ -138,44 +140,57 @@ export default {
       const response = await fetch('https://api.github.com/graphql', { method: 'POST', body: JSON.stringify(body), headers });
       const dataaa = await response.json();
       const {
-        totalIssueContributions,
-        totalPullRequestContributions,
-        totalCommitContributions,
-        totalPullRequestReviewContributions,
-        totalRepositoriesWithContributedCommits,
-        totalRepositoriesWithContributedIssues,
-        totalRepositoryContributions,
+        // totalIssueContributions,
+        // totalPullRequestContributions,
+        // totalCommitContributions,
+        // totalPullRequestReviewContributions,
+        // totalRepositoriesWithContributedCommits,
+        // totalRepositoriesWithContributedIssues,
+        // totalRepositoryContributions,
         contributionCalendar,
       } = dataaa.data.user.contributionsCollection;
-      console.log({
-        totalIssueContributions,
-        totalCommitContributions,
-        totalRepositoryContributions,
-        totalPullRequestContributions,
-        totalPullRequestReviewContributions,
-        totalRepositoriesWithContributedCommits,
-        totalRepositoriesWithContributedIssues,
-      });
+      // console.log({
+      //   totalIssueContributions,
+      //   totalCommitContributions,
+      //   totalRepositoryContributions,
+      //   totalPullRequestContributions,
+      //   totalPullRequestReviewContributions,
+      //   totalRepositoriesWithContributedCommits,
+      //   totalRepositoriesWithContributedIssues,
+      // });
       const contributionCalendarWeeks = contributionCalendar.weeks;
-      this.data.push(...sanitazeData(contributionCalendarWeeks));
-      this.labels.push(...sanitazeLabels(contributionCalendarWeeks, year.label));
+      // this.data.push(...sanitazeData(contributionCalendarWeeks));
+      // this.labels.push(...sanitazeLabels(contributionCalendarWeeks, year.label));
+      return {
+        data: await sanitazeData(contributionCalendarWeeks),
+        label: await sanitazeLabels(contributionCalendarWeeks, year.label),
+      };
+    },
+    async getYearlyContributions() {
+      const data20 = await this.getContributions(githubToken, 'Draichi', this.years[0]);
+      const data19 = await this.getContributions(githubToken, 'Draichi', this.years[1]);
+      const data18 = await this.getContributions(githubToken, 'Draichi', this.years[2]);
+      const data17 = await this.getContributions(githubToken, 'Draichi', this.years[3]);
+      // this.years.forEach((year) => {
+      //   const responsta = this.getContributions(githubToken, 'Draichi', year);
+      //   datinha[year.label] = responsta;
+      //   this.datinha.push(datinha[year.label]);
+      // });
+
       this.sanitazedData = {
-        labels: this.labels,
+        // labels: this.labels,
+        labels: [...data17.label, ...data18.label, ...data19.label, ...data20.label],
         datasets: [{
           label: 'Custom Label Name',
           // backgroundColor: gradient,
           pointBackgroundColor: 'white',
           borderWidth: 1,
           borderColor: '#911215',
-          data: this.data,
+          // data: this.data,
+          data: [...data17.data, ...data18.data, ...data19.data, ...data20.data],
         }],
       };
       this.loading = false;
-    },
-    getYearlyContributions() {
-      this.years.forEach((year) => {
-        this.getContributions(githubToken, 'Draichi', year);
-      });
     },
   },
 };
