@@ -5,15 +5,15 @@
     </q-card>
     <q-card v-else>Loading</q-card>
 
-    <!-- <q-card v-if="!loading" style="width: 100vw;">
-      <BarChart :data="data"/>
-    </q-card> -->
+    <q-card v-if="!loading" style="width: 40vw;">
+      <BarChart :data="dataPie"/>
+    </q-card>
   </q-page>
 </template>
 
 <script>
 import LineChart from 'components/LineChart';
-// import BarChart from 'components/BarChart';
+import BarChart from 'components/BarChart';
 import { githubToken } from '../../.env.local.js';
 
 const today = new Date().toISOString();
@@ -60,7 +60,7 @@ export default {
   name: 'PageIndex',
   components: {
     LineChart,
-    // BarChart,
+    BarChart,
   },
   data() {
     return {
@@ -68,6 +68,14 @@ export default {
       data: [],
       labels: [],
       loading: true,
+      dataPie: null,
+      totalIssueContributions: null,
+      totalPullRequestContributions: null,
+      totalCommitContributions: null,
+      totalPullRequestReviewContributions: null,
+      totalRepositoriesWithContributedCommits: null,
+      totalRepositoriesWithContributedIssues: null,
+      totalRepositoryContributions: null,
       years: [
         {
           from: '2020-01-01T00:00:00',
@@ -131,25 +139,50 @@ export default {
       const response = await fetch('https://api.github.com/graphql', { method: 'POST', body: JSON.stringify(body), headers });
       const dataaa = await response.json();
       const {
-        // totalIssueContributions,
-        // totalPullRequestContributions,
-        // totalCommitContributions,
-        // totalPullRequestReviewContributions,
-        // totalRepositoriesWithContributedCommits,
-        // totalRepositoriesWithContributedIssues,
-        // totalRepositoryContributions,
+        totalIssueContributions,
+        totalPullRequestContributions,
+        totalCommitContributions,
+        totalPullRequestReviewContributions,
+        totalRepositoriesWithContributedCommits,
+        totalRepositoriesWithContributedIssues,
+        totalRepositoryContributions,
         contributionCalendar,
       } = dataaa.data.user.contributionsCollection;
-      // console.log({
-      //   totalIssueContributions,
-      //   totalCommitContributions,
-      //   totalRepositoryContributions,
-      //   totalPullRequestContributions,
-      //   totalPullRequestReviewContributions,
-      //   totalRepositoriesWithContributedCommits,
-      //   totalRepositoriesWithContributedIssues,
-      // });
+      console.log({
+        totalIssueContributions,
+        totalCommitContributions,
+        totalRepositoryContributions,
+        totalPullRequestContributions,
+        totalPullRequestReviewContributions,
+        totalRepositoriesWithContributedCommits,
+        totalRepositoriesWithContributedIssues,
+      });
+      this.totalIssueContributions = totalIssueContributions;
+      this.totalPullRequestContributions = totalPullRequestContributions;
+      this.totalCommitContributions = totalCommitContributions;
+      this.totalPullRequestReviewContributions = totalPullRequestReviewContributions;
+      this.totalRepositoriesWithContributedCommits = totalRepositoriesWithContributedCommits;
+      this.totalRepositoriesWithContributedIssues = totalRepositoriesWithContributedIssues;
+      this.totalRepositoryContributions = totalRepositoryContributions;
       const contributionCalendarWeeks = contributionCalendar.weeks;
+      // > this data is yearly so this is just the last fetched year
+      this.dataPie = {
+        // labels: this.labels,
+        labels: ['totalRepositoryContributions', 'totalRepositoriesWithContributedCommits', 'totalCommitContributions'],
+        datasets: [{
+          // label: 'Total contributions',
+          // backgroundColor: gradient,
+          // pointBackgroundColor: 'white',
+          // borderWidth: 1,
+          // borderColor: '#911215',
+          // data: this.data,
+          data: [
+            totalRepositoryContributions,
+            totalRepositoriesWithContributedCommits,
+            totalCommitContributions,
+          ],
+        }],
+      };
       // this.data.push(...sanitazeData(contributionCalendarWeeks));
       // this.labels.push(...sanitazeLabels(contributionCalendarWeeks, year.label));
       return {
