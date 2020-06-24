@@ -11,9 +11,9 @@ export default {
   mounted() {
     const ctx = document.getElementById('line-chart').getContext('2d');
     const gradient = ctx.createLinearGradient(0, 230, 0, 50);
-    gradient.addColorStop(1, 'rgba(76, 211, 150, 0.1)');
-    gradient.addColorStop(0.2, 'rgba(53, 183, 125, 0)');
-    gradient.addColorStop(0, 'rgba(119,52,169,0)');
+    gradient.addColorStop(1, 'rgba(76, 211, 150, 0.3)');
+    gradient.addColorStop(0.5, 'rgba(53, 183, 125, 0.05)');
+    gradient.addColorStop(0, 'rgba(119,52,169,0.01)');
     this.data.datasets[0].backgroundColor = gradient;
     this.data.datasets[0].fill = true;
     this.data.datasets[0].borderColor = '#42b883';

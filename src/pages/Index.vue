@@ -1,9 +1,9 @@
 <template>
   <q-page class="flex flex-center">
-    {{ datinha }}
     <q-card v-if="!loading" style="width: 100vw;">
       <LineChart :data="sanitazedData"/>
     </q-card>
+    <q-card v-else>Loading</q-card>
 
     <!-- <q-card v-if="!loading" style="width: 100vw;">
       <BarChart :data="data"/>
@@ -25,17 +25,9 @@ const getWeeklyContributions = (week) => {
   return weekContributions;
 };
 
-const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
+const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
 ];
-
-// const callbackForLabel = (item) => {
-//   const { length } = item.contributionDays;
-//   const { date } = item.contributionDays[length - 1];
-//   const monthNumber = new Date(date).getMonth();
-//   const formatedDate = `${monthNames[monthNumber]} / 20`;
-//   return formatedDate;
-// };
 
 const getContributionsByMonth = (array, size) => {
   if (array.length <= size) {
@@ -52,16 +44,16 @@ const sanitazeData = (contributionCalendarWeeks) => {
 };
 
 const sanitazeLabels = (contributionCalendarWeeks, yearLabel) => {
-  // const weeklyContributions = contributionCalendarWeeks.map(callbackForLabel).flat();
   const weeklyContributions = contributionCalendarWeeks.map((item) => {
     const { length } = item.contributionDays;
     const { date } = item.contributionDays[length - 1];
     const monthNumber = new Date(date).getMonth();
-    const formatedDate = `${monthNames[monthNumber]} / ${yearLabel}`;
+    const formatedDate = `${monthNames[monthNumber]} ${yearLabel}`;
     return formatedDate;
   }).flat();
-  const labels = [...new Set(weeklyContributions)];
-  return labels;
+  const montlyContributionsArray = getContributionsByMonth(weeklyContributions, 4);
+  const montlyContributions = montlyContributionsArray.map((item) => item[item.length - 1]);
+  return montlyContributions;
 };
 
 export default {
@@ -76,27 +68,26 @@ export default {
       data: [],
       labels: [],
       loading: true,
-      datinha: [],
       years: [
         {
           from: '2020-01-01T00:00:00',
           to: today,
-          label: '2020',
+          label: '20',
         },
         {
           from: '2019-01-01T00:00:00',
           to: '2019-12-01T00:00:00',
-          label: '2019',
+          label: '19',
         },
         {
           from: '2018-01-01T00:00:00',
           to: '2018-12-01T00:00:00',
-          label: '2018',
+          label: '18',
         },
         {
-          from: '2017-01-01T00:00:00',
+          from: '2017-11-01T00:00:00',
           to: '2017-12-01T00:00:00',
-          label: '2017',
+          label: '17',
         },
       ],
     };
@@ -181,7 +172,7 @@ export default {
         // labels: this.labels,
         labels: [...data17.label, ...data18.label, ...data19.label, ...data20.label],
         datasets: [{
-          label: 'Custom Label Name',
+          label: 'Total contributions',
           // backgroundColor: gradient,
           pointBackgroundColor: 'white',
           borderWidth: 1,
