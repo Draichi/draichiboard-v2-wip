@@ -1,12 +1,15 @@
 <template>
   <q-page class="flex flex-center">
+    <div style="height: 4rem">
+      <span id="text-rotate"></span>
+    </div>
     <q-card v-if="!loading" style="width: 100vw;">
-      <LineChart :data="sanitazedData"/>
+      <LineChart :data="sanitazedData" />
     </q-card>
     <q-card v-else>Loading</q-card>
 
     <q-card v-if="!loading" style="width: 40vw;">
-      <BarChart :data="dataPie"/>
+      <BarChart :data="dataPie" />
     </q-card>
   </q-page>
 </template>
@@ -19,40 +22,68 @@ import { githubToken } from '../../.env.local.js';
 const today = new Date().toISOString();
 
 const getWeeklyContributions = (week) => {
-  const weekContributionsArray = week.contributionDays
-    .reduce((acc, val) => acc.concat(val.contributionCount), []);
+  const weekContributionsArray = week.contributionDays.reduce(
+    (acc, val) => acc.concat(val.contributionCount),
+    [],
+  );
   const weekContributions = weekContributionsArray.reduce((a, b) => a + b, 0);
   return weekContributions;
 };
 
-const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+const monthNames = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
 ];
 
 const getContributionsByMonth = (array, size) => {
   if (array.length <= size) {
     return [array];
   }
-  return [array.slice(0, size), ...getContributionsByMonth(array.slice(size), size)];
+  return [
+    array.slice(0, size),
+    ...getContributionsByMonth(array.slice(size), size),
+  ];
 };
 
 const sanitazeData = (contributionCalendarWeeks) => {
-  const weeklyContributions = contributionCalendarWeeks.map(getWeeklyContributions).flat();
-  const montlyContributionsArray = getContributionsByMonth(weeklyContributions, 4);
+  const weeklyContributions = contributionCalendarWeeks
+    .map(getWeeklyContributions)
+    .flat();
+  const montlyContributionsArray = getContributionsByMonth(
+    weeklyContributions,
+    4,
+  );
   const montlyContributions = montlyContributionsArray.map((item) => item.reduce((a, b) => a + b));
   return montlyContributions;
 };
 
 const sanitazeLabels = (contributionCalendarWeeks, yearLabel) => {
-  const weeklyContributions = contributionCalendarWeeks.map((item) => {
-    const { length } = item.contributionDays;
-    const { date } = item.contributionDays[length - 1];
-    const monthNumber = new Date(date).getMonth();
-    const formatedDate = `${monthNames[monthNumber]} ${yearLabel}`;
-    return formatedDate;
-  }).flat();
-  const montlyContributionsArray = getContributionsByMonth(weeklyContributions, 4);
-  const montlyContributions = montlyContributionsArray.map((item) => item[item.length - 1]);
+  const weeklyContributions = contributionCalendarWeeks
+    .map((item) => {
+      const { length } = item.contributionDays;
+      const { date } = item.contributionDays[length - 1];
+      const monthNumber = new Date(date).getMonth();
+      const formatedDate = `${monthNames[monthNumber]} ${yearLabel}`;
+      return formatedDate;
+    })
+    .flat();
+  const montlyContributionsArray = getContributionsByMonth(
+    weeklyContributions,
+    4,
+  );
+  const montlyContributions = montlyContributionsArray.map(
+    (item) => item[item.length - 1],
+  );
   return montlyContributions;
 };
 
@@ -136,7 +167,11 @@ export default {
           }`,
       };
 
-      const response = await fetch('https://api.github.com/graphql', { method: 'POST', body: JSON.stringify(body), headers });
+      const response = await fetch('https://api.github.com/graphql', {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers,
+      });
       const dataaa = await response.json();
       const {
         totalIssueContributions,
@@ -168,20 +203,29 @@ export default {
       // > this data is yearly so this is just the last fetched year
       this.dataPie = {
         // labels: this.labels,
-        labels: ['totalRepositoryContributions', 'totalRepositoriesWithContributedCommits', 'totalCommitContributions'],
-        datasets: [{
-          // label: 'Total contributions',
-          // backgroundColor: gradient,
-          // pointBackgroundColor: 'white',
-          // borderWidth: 1,
-          // borderColor: '#911215',
-          // data: this.data,
-          data: [
-            totalRepositoryContributions,
-            totalRepositoriesWithContributedCommits,
-            totalCommitContributions,
-          ],
-        }],
+        labels: [
+          'totalRepositoryContributions',
+          'totalRepositoriesWithContributedCommits',
+          'totalCommitContributions',
+        ],
+        datasets: [
+          {
+            // label: 'Total contributions',
+            backgroundColor: [
+              'rgba(120, 74, 211, 0.29)',
+              'rgba(74, 211, 150, 0.29)',
+            ],
+            // pointBackgroundColor: 'white',
+            // borderWidth: 1,
+            // borderColor: '#911215',
+            // data: this.data,
+            data: [
+              totalRepositoryContributions,
+              totalRepositoriesWithContributedCommits,
+              totalCommitContributions,
+            ],
+          },
+        ],
       };
       // this.data.push(...sanitazeData(contributionCalendarWeeks));
       // this.labels.push(...sanitazeLabels(contributionCalendarWeeks, year.label));
@@ -191,10 +235,26 @@ export default {
       };
     },
     async getYearlyContributions() {
-      const data20 = await this.getContributions(githubToken, 'Draichi', this.years[0]);
-      const data19 = await this.getContributions(githubToken, 'Draichi', this.years[1]);
-      const data18 = await this.getContributions(githubToken, 'Draichi', this.years[2]);
-      const data17 = await this.getContributions(githubToken, 'Draichi', this.years[3]);
+      const data20 = await this.getContributions(
+        githubToken,
+        'Draichi',
+        this.years[0],
+      );
+      const data19 = await this.getContributions(
+        githubToken,
+        'Draichi',
+        this.years[1],
+      );
+      const data18 = await this.getContributions(
+        githubToken,
+        'Draichi',
+        this.years[2],
+      );
+      const data17 = await this.getContributions(
+        githubToken,
+        'Draichi',
+        this.years[3],
+      );
       // this.years.forEach((year) => {
       //   const responsta = this.getContributions(githubToken, 'Draichi', year);
       //   datinha[year.label] = responsta;
@@ -203,19 +263,51 @@ export default {
 
       this.sanitazedData = {
         // labels: this.labels,
-        labels: [...data17.label, ...data18.label, ...data19.label, ...data20.label],
-        datasets: [{
-          label: 'Total contributions',
-          // backgroundColor: gradient,
-          pointBackgroundColor: 'white',
-          borderWidth: 1,
-          borderColor: '#911215',
-          // data: this.data,
-          data: [...data17.data, ...data18.data, ...data19.data, ...data20.data],
-        }],
+        labels: [
+          ...data17.label,
+          ...data18.label,
+          ...data19.label,
+          ...data20.label,
+        ],
+        datasets: [
+          {
+            label: 'Total contributions',
+            // backgroundColor: gradient,
+            pointBackgroundColor: 'white',
+            borderWidth: 1,
+            borderColor: '#911215',
+            // data: this.data,
+            data: [
+              ...data17.data,
+              ...data18.data,
+              ...data19.data,
+              ...data20.data,
+            ],
+          },
+        ],
       };
       this.loading = false;
     },
   },
 };
 </script>
+
+<style lang="scss">
+  div>span#text-rotate:before{
+    content: '1';
+    font-size: 2rem;
+    animation-name: head;
+    animation-duration: 5s;
+    animation-iteration-count: infinite;
+}
+
+@keyframes head {
+    0%  {font-size: 2rem; opacity:1;}
+    20% {font-size: 1rem; opacity:0;}
+    40% {font-size: 2rem; opacity:1; content: "2"}
+    60% {font-size: 1rem; opacity:0;}
+    80% {font-size: 2rem; opacity:1; content: '3'}
+    90% {font-size: 1rem; opacity:0;}
+    100% {font-size: 2rem;opacity:1;}
+}
+</style>
