@@ -1,17 +1,25 @@
 <template>
-  <q-page class="flex flex-center">
-    <div style="height: 4rem">
-      <span id="text-rotate"></span>
-    </div>
-    <q-card v-if="!loading" style="width: 100vw;">
-      <LineChart :data="sanitazedData" />
-    </q-card>
-    <q-card v-else>Loading</q-card>
+    <div class="row">
+      <div class="col-auto column">
+        <q-card v-if="!loading" class="q-ma-md">
+          <BarChart :data="dataPie" />
+          <BarChart :data="dataPie" />
+        </q-card>
+        <q-card v-else>Loading</q-card>
 
-    <q-card v-if="!loading" style="width: 40vw;">
-      <BarChart :data="dataPie" />
-    </q-card>
-  </q-page>
+      </div>
+      <div class="col">
+        <q-card v-if="!loading" style="width: 60vw;" class="q-ma-md">
+          <LineChart :data="sanitazedData" />
+        </q-card>
+        <q-card v-else>Loading</q-card>
+
+        <q-card v-if="!loading" class="q-ma-md">
+          <LineChart :data="sanitazedData" />
+        </q-card>
+        <q-card v-else>Loading</q-card>
+      </div>
+    </div>
 </template>
 
 <script>

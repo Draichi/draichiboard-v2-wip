@@ -1,8 +1,8 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-toolbar class="q-mb-sm">
+    <q-toolbar>
       <q-toolbar-title>
-        Quasar App
+        Draichiboard
       </q-toolbar-title>
       <div>
          <q-tabs
@@ -10,9 +10,8 @@
             inline-label
             class="text-teal"
           >
-            <q-tab name="mails" icon="mail" label="Mails" />
-            <q-tab name="alarms" icon="alarm" label="Alarms" />
-            <q-tab name="movies" icon="movie" label="Movies" />
+            <q-tab name="mails" icon="mail" label="v1" />
+            <q-tab name="alarms" icon="alarm" label="v2" />
           </q-tabs>
       </div>
     </q-toolbar>
@@ -33,7 +32,7 @@ export default {
 
   data() {
     return {
-      tab: 'mails',
+      tab: 'alarms',
       leftDrawerOpen: false,
       essentialLinks: [
         {
