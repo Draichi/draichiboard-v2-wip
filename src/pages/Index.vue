@@ -165,6 +165,15 @@ export default {
       const headers = {
         Authorization: `bearer ${token}`,
       };
+      // !-----------------------
+      // !-----------------------
+      // !-----------------------
+      // !-----------------------
+      // % autenticate using vue
+      // $ apollo https://blog.logrocket.com/handling-authentication-in-your-graphql-powered-vue-app/
+      // !-----------------------
+      // !-----------------------
+      // !-----------------------
       const body = {
         // https://developer.github.com/v4/object/contributionscollection/
         query: `query {
