@@ -2,21 +2,36 @@
     <div class="row">
       <div class="col-auto column">
         <q-card v-if="!loading" class="q-ma-md">
-          <BarChart :data="dataPie" />
-          <BarChart :data="dataPie" />
+          <DoughnutChart :data="dataPie" />
+          <BarChart :data="dataPie2" />
         </q-card>
         <q-card v-else>Loading</q-card>
 
       </div>
       <div class="col">
-        <q-card v-if="!loading" style="width: 60vw;" class="q-ma-md">
-          <LineChart :data="sanitazedData" />
+        <q-card v-if="!loading" class="q-ma-md">
+          <div class="main-chart__container">
+            <h4 class="main-chart__subtitle">Total contributions</h4>
+            <h2 class="main-chart__title">
+              Commits
+            </h2>
+            <LineChart :data="sanitazedData" />
+
+          </div>
         </q-card>
         <q-card v-else>Loading</q-card>
 
-        <q-card v-if="!loading" class="q-ma-md">
-          <LineChart :data="sanitazedData" />
-        </q-card>
+        <div v-if="!loading" class="q-ma-md row justify-around items-center">
+          <div class="small-dognut-chart__container">
+            <DoughnutChart :data="dataPie3" />
+          </div>
+          <BarChart :data="dataPie2" />
+          <div class="q-pa-lg" style="max-width: 20vw; line-height:2; letter-spacing: .08rem;
+              font-weight: 100;">
+            <p>total commits: {{ this.totalCommitContributions }}
+            </p>
+          </div>
+        </div>
         <q-card v-else>Loading</q-card>
       </div>
     </div>
@@ -24,6 +39,7 @@
 
 <script>
 import LineChart from 'components/LineChart';
+import DoughnutChart from 'components/DoughnutChart';
 import BarChart from 'components/BarChart';
 import { githubToken } from '../../.env.local.js';
 
@@ -99,6 +115,7 @@ export default {
   name: 'PageIndex',
   components: {
     LineChart,
+    DoughnutChart,
     BarChart,
   },
   data() {
@@ -114,7 +131,8 @@ export default {
       totalPullRequestReviewContributions: null,
       totalRepositoriesWithContributedCommits: null,
       totalRepositoriesWithContributedIssues: null,
-      totalRepositoryContributions: null,
+      tpr: null,
+      tprr: null,
       years: [
         {
           from: '2020-01-01T00:00:00',
@@ -160,7 +178,6 @@ export default {
                 totalRepositoriesWithContributedIssues
                 totalRepositoriesWithContributedPullRequests
                 totalRepositoriesWithContributedPullRequestReviews
-                totalRepositoryContributions
                 contributionCalendar {
                   totalContributions
                   weeks {
@@ -188,58 +205,28 @@ export default {
         totalPullRequestReviewContributions,
         totalRepositoriesWithContributedCommits,
         totalRepositoriesWithContributedIssues,
-        totalRepositoryContributions,
+        totalRepositoriesWithContributedPullRequests,
+        totalRepositoriesWithContributedPullRequestReviews,
         contributionCalendar,
       } = dataaa.data.user.contributionsCollection;
-      console.log({
+      this.totalIssueContributions += totalIssueContributions;
+      this.totalPullRequestContributions += totalPullRequestContributions;
+      this.totalCommitContributions += +totalCommitContributions;
+      this.totalPullRequestReviewContributions += totalPullRequestReviewContributions;
+      this.totalRepositoriesWithContributedCommits += totalRepositoriesWithContributedCommits;
+      this.totalRepositoriesWithContributedIssues += totalRepositoriesWithContributedIssues;
+      this.tpr += totalRepositoriesWithContributedPullRequests;
+      this.tprr += totalRepositoriesWithContributedPullRequestReviews;
+      const contributionCalendarWeeks = contributionCalendar.weeks;
+      return {
+        data: await sanitazeData(contributionCalendarWeeks),
+        label: await sanitazeLabels(contributionCalendarWeeks, year.label),
         totalIssueContributions,
         totalCommitContributions,
-        totalRepositoryContributions,
         totalPullRequestContributions,
         totalPullRequestReviewContributions,
         totalRepositoriesWithContributedCommits,
         totalRepositoriesWithContributedIssues,
-      });
-      this.totalIssueContributions = totalIssueContributions;
-      this.totalPullRequestContributions = totalPullRequestContributions;
-      this.totalCommitContributions = totalCommitContributions;
-      this.totalPullRequestReviewContributions = totalPullRequestReviewContributions;
-      this.totalRepositoriesWithContributedCommits = totalRepositoriesWithContributedCommits;
-      this.totalRepositoriesWithContributedIssues = totalRepositoriesWithContributedIssues;
-      this.totalRepositoryContributions = totalRepositoryContributions;
-      const contributionCalendarWeeks = contributionCalendar.weeks;
-      // > this data is yearly so this is just the last fetched year
-      this.dataPie = {
-        // labels: this.labels,
-        labels: [
-          'totalRepositoryContributions',
-          'totalRepositoriesWithContributedCommits',
-          'totalCommitContributions',
-        ],
-        datasets: [
-          {
-            // label: 'Total contributions',
-            backgroundColor: [
-              'rgba(120, 74, 211, 0.29)',
-              'rgba(74, 211, 150, 0.29)',
-            ],
-            // pointBackgroundColor: 'white',
-            // borderWidth: 1,
-            // borderColor: '#911215',
-            // data: this.data,
-            data: [
-              totalRepositoryContributions,
-              totalRepositoriesWithContributedCommits,
-              totalCommitContributions,
-            ],
-          },
-        ],
-      };
-      // this.data.push(...sanitazeData(contributionCalendarWeeks));
-      // this.labels.push(...sanitazeLabels(contributionCalendarWeeks, year.label));
-      return {
-        data: await sanitazeData(contributionCalendarWeeks),
-        label: await sanitazeLabels(contributionCalendarWeeks, year.label),
       };
     },
     async getYearlyContributions() {
@@ -263,14 +250,7 @@ export default {
         'Draichi',
         this.years[3],
       );
-      // this.years.forEach((year) => {
-      //   const responsta = this.getContributions(githubToken, 'Draichi', year);
-      //   datinha[year.label] = responsta;
-      //   this.datinha.push(datinha[year.label]);
-      // });
-
       this.sanitazedData = {
-        // labels: this.labels,
         labels: [
           ...data17.label,
           ...data18.label,
@@ -280,16 +260,83 @@ export default {
         datasets: [
           {
             label: 'Total contributions',
-            // backgroundColor: gradient,
             pointBackgroundColor: 'white',
             borderWidth: 1,
             borderColor: '#911215',
-            // data: this.data,
             data: [
               ...data17.data,
               ...data18.data,
               ...data19.data,
               ...data20.data,
+            ],
+          },
+        ],
+      };
+      this.dataPie = {
+        labels: [
+          'Issues',
+          'Pull requests',
+          'Reviews',
+        ],
+        datasets: [
+          {
+            backgroundColor: [
+              'rgba(120, 74, 211, 0.29)',
+              'rgba(74, 211, 150, 0.29)',
+              'rgba(47, 12, 150, 0.29)',
+            ],
+            data: [
+              this.totalIssueContributions,
+              this.totalPullRequestContributions,
+              this.totalPullRequestReviewContributions,
+            ],
+          },
+        ],
+      };
+      this.dataPie2 = {
+        labels: [
+          '2017',
+          '2018',
+          '2019',
+          '2020',
+        ],
+        datasets: [
+          {
+            fill: true,
+            label: 'Total contributions',
+            borderColor: '#1d8cf8',
+            borderWidth: 2,
+            borderDash: [],
+            borderDashOffset: 0.0,
+            data: [
+              data17.totalCommitContributions,
+              data18.totalCommitContributions,
+              data19.totalCommitContributions,
+              data20.totalCommitContributions,
+            ],
+          },
+        ],
+      };
+      this.dataPie3 = {
+        labels: [
+          'total repositorires with prs',
+          'total repositorires with prs reviews',
+          'totalRepositoriesWithContributedCommits',
+          'totalRepositoriesWithContributedIssues',
+        ],
+        datasets: [
+          {
+            backgroundColor: [
+              'rgba(120, 74, 211, 0.29)',
+              'rgba(74, 211, 150, 0.29)',
+              'rgba(47, 12, 150, 0.29)',
+              'rgba(0, 12, 150, 0.29)',
+            ],
+            data: [
+              this.tpr,
+              this.tprr,
+              this.totalRepositoriesWithContributedCommits,
+              this.totalRepositoriesWithContributedIssues,
             ],
           },
         ],
@@ -301,21 +348,27 @@ export default {
 </script>
 
 <style lang="scss">
-  div>span#text-rotate:before{
-    content: '1';
-    font-size: 2rem;
-    animation-name: head;
-    animation-duration: 5s;
-    animation-iteration-count: infinite;
+.main-chart {
+  &__container {
+    padding: 1rem;
+  }
+  &__subtitle {
+    margin-top: 0;
+    color: rgb(168, 161, 149);
+    margin-bottom: 0;
+    font-size: .75rem;
+    line-height: 1.2;
+  }
+  &__title {
+    margin-top: 0;
+    color: rgb(232, 230, 227);
+    margin-bottom: .75rem;
+    font-weight: 100;
+    line-height: 1.2;
+    font-size: 1.68rem;
+  }
 }
-
-@keyframes head {
-    0%  {font-size: 2rem; opacity:1;}
-    20% {font-size: 1rem; opacity:0;}
-    40% {font-size: 2rem; opacity:1; content: "2"}
-    60% {font-size: 1rem; opacity:0;}
-    80% {font-size: 2rem; opacity:1; content: '3'}
-    90% {font-size: 1rem; opacity:0;}
-    100% {font-size: 2rem;opacity:1;}
+.small-dognut-chart__container {
+  width: 300px;
 }
 </style>

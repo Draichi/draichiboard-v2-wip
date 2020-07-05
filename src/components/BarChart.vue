@@ -1,19 +1,60 @@
 <script>
-import { Doughnut } from 'vue-chartjs';
+import { Bar } from 'vue-chartjs';
 
 export default {
-  extends: Doughnut,
+  extends: Bar,
   props: {
     data: Object,
     // options: Object,
   },
   mounted() {
-    const options = {};
-    // const ctx = document.getElementById('doughnut-chart').getContext('2d');
-    // const gradient = ctx.createRadialGradient(300, 300, 1, 300, 300, 300);
-    // gradient.addColorStop(0, 'rgba(76, 211, 150, 0.3)');
-    // gradient.addColorStop(1, 'rgba(119,52,169,0.01)');
-    // this.data.datasets[0].backgroundColor = gradient;
+    const options = {
+      responsive: true,
+      tooltips: {
+        backgroundColor: '#f5f5f5',
+        titleFontColor: '#333',
+        bodyFontColor: '#666',
+        bodySpacing: 4,
+        xPadding: 12,
+        mode: 'nearest',
+        intersect: 0,
+        position: 'nearest',
+      },
+      scales: {
+        yAxes: [{
+
+          gridLines: {
+            drawBorder: false,
+            color: 'rgba(29,140,248,0.1)',
+            zeroLineColor: 'transparent',
+          },
+          ticks: {
+            suggestedMin: 60,
+            suggestedMax: 120,
+            padding: 20,
+            fontColor: '#9e9e9e',
+          },
+        }],
+        xAxes: [{
+
+          gridLines: {
+            drawBorder: false,
+            color: 'rgba(29,140,248,0.1)',
+            zeroLineColor: 'transparent',
+          },
+          ticks: {
+            padding: 20,
+            fontColor: '#9e9e9e',
+          },
+        }],
+      },
+    };
+    const ctx = document.getElementById('bar-chart').getContext('2d');
+    const gradient = ctx.createLinearGradient(0, 50, 0, 500);
+    gradient.addColorStop(1, 'rgba(72,72,176,0.2)');
+    gradient.addColorStop(0.4, 'rgba(72,72,176,0.0)');
+    gradient.addColorStop(0, 'rgba(119,52,169,0)');
+    this.data.datasets[0].backgroundColor = gradient;
     this.renderChart(this.data, options);
   },
 };

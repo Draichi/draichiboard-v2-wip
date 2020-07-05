@@ -53,10 +53,10 @@ export default {
             zeroLineColor: 'transparent',
           },
           ticks: {
-            // suggestedMin: Math.min(...this.data.datasets[0].data) - 1,
-            suggestedMax: Math.max(...this.data.datasets[0].data) + 1,
+            suggestedMin: 60,
+            suggestedMax: 125,
             padding: 20,
-            fontColor: '#9e9e9e',
+            fontColor: '#9a9a9a',
           },
         }],
 
@@ -64,12 +64,12 @@ export default {
           barPercentage: 1.6,
           gridLines: {
             drawBorder: false,
-            color: 'rgba(0,242,195,0.1)',
+            color: 'rgba(225,78,202,0.1)',
             zeroLineColor: 'transparent',
           },
           ticks: {
             padding: 20,
-            fontColor: '#9e9e9e',
+            fontColor: '#9a9a9a',
           },
         }],
       },
