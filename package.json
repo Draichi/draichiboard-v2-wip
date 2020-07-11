@@ -8,7 +8,7 @@
   "author": "draichi <lucasdraichi@gmail.com>",
   "private": true,
   "scripts": {
-    "dev": "quasar dev",
+    "dev": "API=$(cat .env.local) quasar dev",
     "build": "quasar build",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore ./",
     "test": "echo \"No test specified\" && exit 0"

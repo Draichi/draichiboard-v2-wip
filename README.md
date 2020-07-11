@@ -4,9 +4,9 @@ Lucas Draichi portfolio and personal metrics dashboard
 
 ## Get githubToken
 ```bash
-cp .env.example.js .env.local.js
+cp .env.example .env.local
 
-# then populate .env.local.js
+# then populate .env.local
 ```
 
 ## Install the dependencies
