@@ -49,6 +49,9 @@ module.exports = function (/* ctx */) {
 
     // Full list of options: https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-build
     build: {
+      env: {
+        GTOKEN: JSON.stringify(process.env.API),
+      },
       vueRouterMode: 'hash', // available values: 'hash', 'history'
       distDir: 'dist',
       // publicPath: '/draichiboard-v2',

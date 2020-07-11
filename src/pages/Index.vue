@@ -41,7 +41,7 @@
 import LineChart from 'components/LineChart';
 import DoughnutChart from 'components/DoughnutChart';
 import BarChart from 'components/BarChart';
-import { githubToken } from '../../.env.local.js';
+// import { githubToken } from '../../.env.local.js';
 
 const today = new Date().toISOString();
 
@@ -240,22 +240,22 @@ export default {
     },
     async getYearlyContributions() {
       const data20 = await this.getContributions(
-        githubToken,
+        process.env.GTOKEN,
         'Draichi',
         this.years[0],
       );
       const data19 = await this.getContributions(
-        githubToken,
+        process.env.GTOKEN,
         'Draichi',
         this.years[1],
       );
       const data18 = await this.getContributions(
-        githubToken,
+        process.env.GTOKEN,
         'Draichi',
         this.years[2],
       );
       const data17 = await this.getContributions(
-        githubToken,
+        process.env.GTOKEN,
         'Draichi',
         this.years[3],
       );
