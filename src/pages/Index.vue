@@ -25,7 +25,8 @@
           <div class="small-dognut-chart__container">
             <DoughnutChart :data="dataPie3" />
           </div>
-          <BarChart :data="dataPie2" />
+          <!-- make it green like the line one-->
+          <HorizontalBar :data="dataRepos" />
           <div class="q-pa-lg" style="max-width: 20vw; line-height:2; letter-spacing: .08rem;
               font-weight: 100;">
             <p>total commits: {{ this.totalCommitContributions }}
@@ -41,7 +42,6 @@
 import LineChart from 'components/LineChart';
 import DoughnutChart from 'components/DoughnutChart';
 import BarChart from 'components/BarChart';
-// import { githubToken } from '../../.env.local.js';
 
 const today = new Date().toISOString();
 
@@ -117,6 +117,7 @@ export default {
     LineChart,
     DoughnutChart,
     BarChart,
+    HorizontalBar: () => import('components/HorizontalBarChart'),
   },
   data() {
     return {
@@ -165,15 +166,6 @@ export default {
       const headers = {
         Authorization: `bearer ${token}`,
       };
-      // !-----------------------
-      // !-----------------------
-      // !-----------------------
-      // !-----------------------
-      // % autenticate using vue
-      // $ apollo https://blog.logrocket.com/handling-authentication-in-your-graphql-powered-vue-app/
-      // !-----------------------
-      // !-----------------------
-      // !-----------------------
       const body = {
         // https://developer.github.com/v4/object/contributionscollection/
         query: `query {
@@ -187,6 +179,7 @@ export default {
                 totalRepositoriesWithContributedIssues
                 totalRepositoriesWithContributedPullRequests
                 totalRepositoriesWithContributedPullRequestReviews
+                totalRepositoryContributions
                 contributionCalendar {
                   totalContributions
                   weeks {
@@ -216,11 +209,12 @@ export default {
         totalRepositoriesWithContributedIssues,
         totalRepositoriesWithContributedPullRequests,
         totalRepositoriesWithContributedPullRequestReviews,
+        totalRepositoryContributions,
         contributionCalendar,
       } = dataaa.data.user.contributionsCollection;
       this.totalIssueContributions += totalIssueContributions;
       this.totalPullRequestContributions += totalPullRequestContributions;
-      this.totalCommitContributions += +totalCommitContributions;
+      this.totalCommitContributions += totalCommitContributions;
       this.totalPullRequestReviewContributions += totalPullRequestReviewContributions;
       this.totalRepositoriesWithContributedCommits += totalRepositoriesWithContributedCommits;
       this.totalRepositoriesWithContributedIssues += totalRepositoriesWithContributedIssues;
@@ -236,6 +230,7 @@ export default {
         totalPullRequestReviewContributions,
         totalRepositoriesWithContributedCommits,
         totalRepositoriesWithContributedIssues,
+        totalRepositoryContributions,
       };
     },
     async getYearlyContributions() {
@@ -322,6 +317,30 @@ export default {
               data18.totalCommitContributions,
               data19.totalCommitContributions,
               data20.totalCommitContributions,
+            ],
+          },
+        ],
+      };
+      this.dataRepos = {
+        labels: [
+          '2017',
+          '2018',
+          '2019',
+          '2020',
+        ],
+        datasets: [
+          {
+            fill: true,
+            label: 'Repos created',
+            borderColor: '#1d8cf8',
+            borderWidth: 2,
+            borderDash: [],
+            borderDashOffset: 0.0,
+            data: [
+              data17.totalRepositoryContributions,
+              data18.totalRepositoryContributions,
+              data19.totalRepositoryContributions,
+              data20.totalRepositoryContributions,
             ],
           },
         ],
