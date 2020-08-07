@@ -10,6 +10,7 @@ export default {
   mounted() {
     const options = {
       responsive: true,
+      maintainAspectRatio: false,
       tooltips: {
         backgroundColor: '#f5f5f5',
         titleFontColor: '#333',

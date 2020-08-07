@@ -1,7 +1,7 @@
 <template>
     <div class="row">
       <div class="col-auto column">
-        <q-card v-if="!loading" class="q-ma-md">
+        <q-card v-if="!loading" class="q-ml-md q-mt-md">
           <DoughnutChart :data="dataPie" />
           <BarChart :data="dataPie2" />
         </q-card>
@@ -15,23 +15,34 @@
             <h2 class="main-chart__title">
               Commits
             </h2>
-            <LineChart :data="sanitazedData" />
+            <LineChart :data="sanitazedData"  style="height: 35vh" />
 
           </div>
         </q-card>
         <q-card v-else>Loading</q-card>
 
-        <div v-if="!loading" class="q-ma-md row justify-around items-center">
-          <div class="small-dognut-chart__container">
-            <DoughnutChart :data="dataPie3" />
-          </div>
+        <div v-if="!loading" class="q-mx-md row justify-around items-top">
+          <q-card class="col flex items-center justify-center"  style="height: 40vh">
+            <div class="small-dognut-chart__container">
+              <DoughnutChart :data="dataPie3" />
+            </div>
+
+          </q-card>
           <!-- make it green like the line one-->
-          <HorizontalBar :data="dataRepos" />
-          <div class="q-pa-lg" style="max-width: 20vw; line-height:2; letter-spacing: .08rem;
-              font-weight: 100;">
-            <p>total commits: {{ this.totalCommitContributions }}
-            </p>
-          </div>
+          <q-card
+            class="q-mx-md col flex justify-center items-center relative-position"
+            style="height: 40vh">
+            <HorizontalBar :data="dataRepos"/>
+
+          </q-card>
+          <q-card class="col flex justify-center items-center" style="height: 40vh">
+            <div class="q-pa-lg"
+            style="max-width: 20vw; line-height:2; letter-spacing: .08rem;
+                font-weight: 100;">
+              <p>total commits: {{ this.totalCommitContributions }}
+              </p>
+            </div>
+          </q-card>
         </div>
         <q-card v-else>Loading</q-card>
       </div>
@@ -399,4 +410,10 @@ export default {
 .small-dognut-chart__container {
   width: 300px;
 }
+
+canvas#horizontalbar-chart {
+  width: 90% !important;
+  // height: 90% !important;
+}
+
 </style>
