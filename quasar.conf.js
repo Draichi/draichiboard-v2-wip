@@ -52,7 +52,7 @@ module.exports = function (/* ctx */) {
       env: {
         GTOKEN: JSON.stringify(process.env.API),
       },
-      vueRouterMode: 'hash', // available values: 'hash', 'history'
+      vueRouterMode: 'history', // available values: 'hash', 'history'
       distDir: 'dist',
       // publicPath: '/draichiboard-v2',
 
