@@ -1,7 +1,7 @@
 <template>
-    <div v-if="!loading" class="row">
+    <div v-if="!loading" class="row full-height">
       <div class="col-auto column">
-        <q-card class="q-ml-md q-mt-md">
+        <q-card class="q-ml-md q-mt-md full-height">
           <DoughnutChart :data="dataPie" />
           <BarChart :data="dataPie2" />
         </q-card>
