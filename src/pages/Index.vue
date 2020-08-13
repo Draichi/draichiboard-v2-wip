@@ -1,15 +1,14 @@
 <template>
-    <div class="row">
+    <div v-if="!loading" class="row">
       <div class="col-auto column">
-        <q-card v-if="!loading" class="q-ml-md q-mt-md">
+        <q-card class="q-ml-md q-mt-md">
           <DoughnutChart :data="dataPie" />
           <BarChart :data="dataPie2" />
         </q-card>
-        <q-card v-else>Loading</q-card>
 
       </div>
       <div class="col">
-        <q-card v-if="!loading" class="q-ma-md">
+        <q-card class="q-ma-md">
           <div class="main-chart__container">
             <h4 class="main-chart__subtitle">Total contributions</h4>
             <h2 class="main-chart__title">
@@ -19,9 +18,8 @@
 
           </div>
         </q-card>
-        <q-card v-else>Loading</q-card>
 
-        <div v-if="!loading" class="q-mx-md row justify-around items-top">
+        <div class="q-mx-md row justify-around items-top">
           <q-card class="col flex items-center justify-center"  style="height: 40vh">
             <div class="small-dognut-chart__container">
               <DoughnutChart :data="dataPie3" />
@@ -44,8 +42,13 @@
             </div>
           </q-card>
         </div>
-        <q-card v-else>Loading</q-card>
       </div>
+    </div>
+    <div v-else class="row justify-center items-center window-height">
+      <q-spinner-cube
+        size="200"
+        color="secondary"
+      />
     </div>
 </template>
 
