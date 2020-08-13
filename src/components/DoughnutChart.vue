@@ -10,6 +10,10 @@ export default {
   mounted() {
     const options = {
       responsive: true,
+      legend: {
+        position: 'bottom',
+        // align: 'start',
+      },
     };
     // const ctx = document.getElementById('doughnut-chart').getContext('2d');
     // const gradient = ctx.createRadialGradient(300, 300, 1, 300, 300, 300);

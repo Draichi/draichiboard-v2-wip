@@ -1,55 +1,52 @@
 <template>
-    <div v-if="!loading" class="row full-height">
-      <div class="col-auto column">
-        <q-card class="q-ml-md q-mt-md full-height">
-          <DoughnutChart :data="dataPie" />
-          <BarChart :data="dataPie2" />
-        </q-card>
+  <div v-if="!loading" class="row full-height">
+    <div class="col-auto column">
+      <q-card class="q-ml-md q-mt-md full-height">
+        <div>Total Contributions</div>
+        <DoughnutChart :data="dataPie" />
+        <div>Total Contributions per year</div>
+        <BarChart :data="dataPie2" />
+      </q-card>
+    </div>
+    <div class="col">
+      <q-card class="q-ma-md">
+        <div class="main-chart__container">
+          <h4 class="main-chart__subtitle">Total contributions</h4>
+          <h2 class="main-chart__title">Commits</h2>
+          <LineChart :data="sanitazedData" style="height: 35vh" />
+        </div>
+      </q-card>
 
-      </div>
-      <div class="col">
-        <q-card class="q-ma-md">
-          <div class="main-chart__container">
-            <h4 class="main-chart__subtitle">Total contributions</h4>
-            <h2 class="main-chart__title">
-              Commits
-            </h2>
-            <LineChart :data="sanitazedData"  style="height: 35vh" />
-
+      <div class="q-mx-md row justify-around items-top">
+        <q-card class="col column flex items-center justify-center" style="height: 40vh">
+          <div>Total Repositories</div>
+          <div class="small-dognut-chart__container">
+            <DoughnutChart :data="dataPie3" />
           </div>
         </q-card>
-
-        <div class="q-mx-md row justify-around items-top">
-          <q-card class="col flex items-center justify-center"  style="height: 40vh">
-            <div class="small-dognut-chart__container">
-              <DoughnutChart :data="dataPie3" />
-            </div>
-
-          </q-card>
-          <!-- make it green like the line one-->
-          <q-card
-            class="q-mx-md col flex justify-center items-center relative-position"
-            style="height: 40vh">
-            <HorizontalBar :data="dataRepos"/>
-
-          </q-card>
-          <q-card class="col flex justify-center items-center" style="height: 40vh">
-            <div class="q-pa-lg"
+        <!-- make it green like the line one-->
+        <q-card
+          class="q-mx-md col flex justify-center items-center relative-position"
+          style="height: 40vh"
+        >
+          <div>Repos created per year</div>
+          <HorizontalBar :data="dataRepos" />
+        </q-card>
+        <q-card class="col flex justify-center items-center" style="height: 40vh">
+          <div
+            class="q-pa-lg"
             style="max-width: 20vw; line-height:2; letter-spacing: .08rem;
-                font-weight: 100;">
-              <p>total commits: {{ this.totalCommitContributions }}
-              </p>
-            </div>
-          </q-card>
-        </div>
+                font-weight: 100;"
+          >
+            <p>total commits: {{ this.totalCommitContributions }}</p>
+          </div>
+        </q-card>
       </div>
     </div>
-    <div v-else class="row justify-center items-center window-height">
-      <q-spinner-cube
-        size="200"
-        color="secondary"
-      />
-    </div>
+  </div>
+  <div v-else class="row justify-center items-center window-height">
+    <q-spinner-cube size="200" color="secondary" />
+  </div>
 </template>
 
 <script>
@@ -291,11 +288,7 @@ export default {
         ],
       };
       this.dataPie = {
-        labels: [
-          'Issues',
-          'Pull requests',
-          'Reviews',
-        ],
+        labels: ['Issues', 'Pull requests', 'Reviews'],
         datasets: [
           {
             backgroundColor: [
@@ -312,12 +305,7 @@ export default {
         ],
       };
       this.dataPie2 = {
-        labels: [
-          '2017',
-          '2018',
-          '2019',
-          '2020',
-        ],
+        labels: ['2017', '2018', '2019', '2020'],
         datasets: [
           {
             fill: true,
@@ -336,12 +324,7 @@ export default {
         ],
       };
       this.dataRepos = {
-        labels: [
-          '2017',
-          '2018',
-          '2019',
-          '2020',
-        ],
+        labels: ['2017', '2018', '2019', '2020'],
         datasets: [
           {
             fill: true,
@@ -360,12 +343,7 @@ export default {
         ],
       };
       this.dataPie3 = {
-        labels: [
-          'total repositorires with prs',
-          'total repositorires with prs reviews',
-          'totalRepositoriesWithContributedCommits',
-          'totalRepositoriesWithContributedIssues',
-        ],
+        labels: ['With PRs', 'With Reviews', 'With Commits', 'With Issues'],
         datasets: [
           {
             backgroundColor: [
@@ -398,13 +376,13 @@ export default {
     margin-top: 0;
     color: rgb(168, 161, 149);
     margin-bottom: 0;
-    font-size: .75rem;
+    font-size: 0.75rem;
     line-height: 1.2;
   }
   &__title {
     margin-top: 0;
     color: rgb(232, 230, 227);
-    margin-bottom: .75rem;
+    margin-bottom: 0.75rem;
     font-weight: 100;
     line-height: 1.2;
     font-size: 1.68rem;
@@ -418,5 +396,4 @@ canvas#horizontalbar-chart {
   width: 90% !important;
   // height: 90% !important;
 }
-
 </style>

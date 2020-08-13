@@ -11,6 +11,9 @@ export default {
     const options = {
       responsive: true,
       maintainAspectRatio: false,
+      legend: {
+        display: false,
+      },
       tooltips: {
         backgroundColor: '#f5f5f5',
         titleFontColor: '#333',
